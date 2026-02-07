@@ -78,8 +78,8 @@ def generateMod():
         if not has_nonstackable:
             tables3.append(table_name)
 
-    for ITEM_MULTIPLIER in [1, 2, 4, 8, 16]:
-        if ITEM_MULTIPLIER > 1:
+    for ITEM_MULTIPLIER in [1, 2, 4, 8, 16, "16_4"]:
+        if (type(ITEM_MULTIPLIER) == int and ITEM_MULTIPLIER > 1) or (type(ITEM_MULTIPLIER) == str and int(ITEM_MULTIPLIER.split("_")[0]) > 1):
             with edit_json("Game/Content/GameData/Item/GDSCommonItemTableSetting") as common_content:
                 base_common_map = common_content["Exports"][0]["Data"][0]["Value"]
                 for common in base_common_map:
@@ -91,13 +91,15 @@ def generateMod():
                                 tmp_name = tmp["Name"]
                                 if tmp_name == "cond":
                                     if len(tmp["Value"]) == 0:
-                                        common_item["Value"][1]["Value"] *= ITEM_MULTIPLIER
+                                        common_item["Value"][1]["Value"] *= (ITEM_MULTIPLIER if type(ITEM_MULTIPLIER) == int else int(ITEM_MULTIPLIER.split("_")[0]))
                                     break
         add_rate = [0]
         if ITEM_MULTIPLIER == 1:
             add_rate = [10, 50, 100]
         for rate in add_rate:
             for all_mats in [False, True]:
+                if type(ITEM_MULTIPLIER) == str and not all_mats:
+                    continue
 ##                if all_mats:
 ##                    print("Step 4.c - Creating Battle Table Content for multiplier: " + str(ITEM_MULTIPLIER) + " [Materials + Gear]")
 ##                else:
@@ -121,9 +123,23 @@ def generateMod():
                                     tmp_cond_name = tmp_cond["Value"][0]["Value"]
                                     if tmp_cond_name not in allowed_cond:
                                         cond_allow = False
-                            if cond_allow and ((all_mats and group_table_name in tables3) or (group_table_name in tables)):
-                                for i in range(ITEM_MULTIPLIER-1):
-                                    new_list.append(copy.deepcopy(group_stuff))
+                            if type(ITEM_MULTIPLIER) == int:
+                                if cond_allow and ((all_mats and group_table_name in tables3) or (group_table_name in tables)):
+                                    for i in range(ITEM_MULTIPLIER-1):
+                                        new_list.append(copy.deepcopy(group_stuff))
+                            elif type(ITEM_MULTIPLIER) == str:
+                                if cond_allow:
+                                    mat_mult = int(ITEM_MULTIPLIER.split("_")[0])
+                                    gear_mult = int(ITEM_MULTIPLIER.split("_")[1])
+                                    if group_table_name in tables:
+                                        for i in range(mat_mult-1):
+                                            new_list.append(copy.deepcopy(group_stuff))
+                                    elif group_table_name in tables3:
+                                        for i in range(gear_mult-1):
+                                            new_list.append(copy.deepcopy(group_stuff))
+                                        
+                                        
+                    
                         group_list += new_list
 
                 # Step 4 : Convert to asset
