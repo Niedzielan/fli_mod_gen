@@ -14,7 +14,7 @@ def generateMod():
 
     effect_type_whitelist = ["drop_item_up", "gain_rich_up", "gain_exp_up", "gain_all_exp_up"]
 
-    for multiplier in [2, 4, 8]:
+    for multiplier in [2, 4, 8, 16]:
         with edit_json("/Game/Content/GameData/Skill/GDSSkillData.json") as skillData:
 ##            skillData = open_json("/Game/Content/GameData/Skill/GDSSkillData.json")
             base_map = skillData["Exports"][0]["Data"][0]["Value"]

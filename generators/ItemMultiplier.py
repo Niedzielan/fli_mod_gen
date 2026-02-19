@@ -23,7 +23,9 @@ def generateMod():
                     "CondCmd_IsRoguelikeAreaClearCount_Equal",
                     "CondCmd_IsRoguelikeAreaClearCount_Greater",
                     "CondCmd_IsRoguelikeBossType",
-                    "CondCmd_AvatarLife_Equal"]
+                    "CondCmd_AvatarLife_Equal",
+                    "CondCmd_IsFellowNPCPowerUpItemUnavailableAll",
+                    "CondCmd_UnCondition"]
 
     whitelist_important = ["iky01000880",
                            "iky01000190",
@@ -90,7 +92,15 @@ def generateMod():
                             for tmp in common_item["Value"]:
                                 tmp_name = tmp["Name"]
                                 if tmp_name == "cond":
-                                    if len(tmp["Value"]) == 0:
+                                    # Check condition against whitelist
+                                    cond_allow = True
+                                    if len(tmp["Value"]) != 0:
+                                        for tmp_cond in tmp["Value"]:
+                                            tmp_cond_name = tmp_cond["Value"][0]["Value"]
+                                            if tmp_cond_name not in allowed_cond:
+                                                cond_allow = False
+##                                            print(f"{common_name} -- {tmp_cond_name} = {cond_allow}")
+                                    if cond_allow: # len(tmp["Value"]) == 0:
                                         common_item["Value"][1]["Value"] *= (ITEM_MULTIPLIER if type(ITEM_MULTIPLIER) == int else int(ITEM_MULTIPLIER.split("_")[0]))
                                     break
         add_rate = [0]
