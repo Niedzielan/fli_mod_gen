@@ -12,7 +12,7 @@ def generateMod():
     convert_all_assets_to_json("*ExpLevel*.*")
     # Step 3 : Edit
 
-    for multiplier in [2, 4, 8, 16]:
+    for multiplier in [2, 4, 8, 16, 255]:
         with edit_json("/Game/Content/GameData/Chara/GDSExpLevelConfig") as expData:
             
 
