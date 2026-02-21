@@ -13,15 +13,13 @@ def generateMod():
     # Step 3 : Edit
 
     for partDataFilename in ["GDSAvatarEyePartsData", "GDSAvatarHairModelData", "GDSAvatarOptionPartsData"]:
-        partDataData = open_json("Game/Content/GameData/Avatar/"+partDataFilename)
-        base_map = partDataData["Exports"][0]["Data"][0]["Value"]
+        with edit_json("Game/Content/GameData/Avatar/"+partDataFilename) as partDataData:
+            base_map = partDataData["Exports"][0]["Data"][0]["Value"]
 
-        for part in base_map:
-            for part_property in part[1]["Value"]:
-                if part_property["Name"] == "cond":
-                    part_property["Value"] = []
-
-        save_json(partDataData, "Game/Content/GameData/Avatar/"+partDataFilename)
+            for part in base_map:
+                for part_property in part[1]["Value"]:
+                    if part_property["Name"] == "cond":
+                        part_property["Value"] = []
 
     # Step 4 : Convert to asset
     convert_all_json_to_asset()

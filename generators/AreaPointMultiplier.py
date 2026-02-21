@@ -13,26 +13,21 @@ def generateMod():
     # Step 3 : Edit
 
     for multiplier in [2, 4, 8]:
-        areaPointData = open_json("/Game/Content/GameData/Map/GDSAreaPoint")
+        with edit_json("/Game/Content/GameData/Map/GDSAreaPoint") as areaPointData:
+            base_map = areaPointData["Exports"][0]["Data"][0]["Value"]
 
-        base_map = areaPointData["Exports"][0]["Data"][0]["Value"]
-
-        for area in base_map:
-            for item in area[1]["Value"][1]["Value"]:
-                item["Value"] *= multiplier
-
-        save_json(areaPointData, "/Game/Content/GameData/Map/GDSAreaPoint")
-        
-        activeEventRewardData = open_json("/Game/Content/GameData/Quest/GDSActiveEventRewardData")
-
-        base_map1 = activeEventRewardData["Exports"][0]["Data"][0]["Value"]
-
-        for typ in base_map1:
-            for item in typ[1]["Value"][1]["Value"]:
-                if item["Name"] == "AreaPoint":
+            for area in base_map:
+                for item in area[1]["Value"][1]["Value"]:
                     item["Value"] *= multiplier
 
-        save_json(activeEventRewardData, "/Game/Content/GameData/Quest/GDSActiveEventRewardData")
+
+        with edit_json("/Game/Content/GameData/Quest/GDSActiveEventRewardData") as activeEventRewardData:
+            base_map1 = activeEventRewardData["Exports"][0]["Data"][0]["Value"]
+
+            for typ in base_map1:
+                for item in typ[1]["Value"][1]["Value"]:
+                    if item["Name"] == "AreaPoint":
+                        item["Value"] *= multiplier
 
         # Step 4 : Convert to asset
         convert_all_json_to_asset()
